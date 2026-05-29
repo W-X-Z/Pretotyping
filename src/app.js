@@ -21,11 +21,15 @@ const els = {
   applyMetadata: document.querySelector("#applyMetadata"),
   commandInput: document.querySelector("#commandInput"),
   generatePrototype: document.querySelector("#generatePrototype"),
+  generateVariations: document.querySelector("#generateVariations"),
   saveVersion: document.querySelector("#saveVersion"),
   versionList: document.querySelector("#versionList"),
   versionCount: document.querySelector("#versionCount"),
   toggleInspect: document.querySelector("#toggleInspect"),
-  inspectorPanel: document.querySelector("#inspectorPanel")
+  inspectorPanel: document.querySelector("#inspectorPanel"),
+  variationDrawer: document.querySelector("#variationDrawer"),
+  variationGrid: document.querySelector("#variationGrid"),
+  closeVariations: document.querySelector("#closeVariations")
 };
 
 init();
@@ -75,6 +79,35 @@ function bindEvents() {
 
   els.generatePrototype.addEventListener("click", () => {
     renderPrototype(createPrototype(activeScreen(), els.commandInput.value, state.selectedTemplate));
+  });
+
+  els.generateVariations.addEventListener("click", () => {
+    renderVariations(createVariationSet(activeScreen(), els.commandInput.value));
+  });
+
+  els.closeVariations.addEventListener("click", () => {
+    els.variationDrawer.classList.remove("is-open");
+    els.variationDrawer.setAttribute("aria-hidden", "true");
+  });
+
+  els.variationGrid.addEventListener("click", (event) => {
+    const action = event.target.closest("[data-variation-action]");
+    if (!action) return;
+    const card = event.target.closest("[data-variation-id]");
+    const variation = JSON.parse(decodeURIComponent(card.dataset.variation));
+
+    if (action.dataset.variationAction === "try") {
+      state.activeScreenId = variation.screenId;
+      render();
+      renderPrototype(variation.prototype);
+      els.variationDrawer.classList.remove("is-open");
+      els.variationDrawer.setAttribute("aria-hidden", "true");
+    }
+
+    if (action.dataset.variationAction === "save") {
+      saveVariationVersion(variation);
+      renderVersions();
+    }
   });
 
   els.saveVersion.addEventListener("click", () => {
@@ -186,6 +219,124 @@ function createPrototype(screen, command, template) {
   };
 }
 
+function createVariationSet(screen, command) {
+  const intent = inferIntent(command);
+  const base = {
+    screenId: screen.id,
+    command: command.trim(),
+    screenImage: screen.image,
+    screenName: screen.name
+  };
+
+  return [
+    {
+      ...base,
+      id: "sentence",
+      label: "문장",
+      principle: "기존 레이아웃을 가장 적게 건드리고 문장형 근거를 추가합니다.",
+      density: "낮음",
+      prototype: {
+        screenId: screen.id,
+        template: "popup",
+        title: intent.title,
+        body: `${intent.body} 핵심 근거를 한 줄 설명으로 먼저 보여줍니다.`,
+        primaryAction: intent.primaryAction,
+        secondaryAction: intent.secondaryAction,
+        completion: "문장형 초안 인터랙션이 실행되었습니다."
+      }
+    },
+    {
+      ...base,
+      id: "chip",
+      label: "CHIP",
+      principle: "판단 근거를 작고 빠르게 스캔 가능한 칩으로 분해합니다.",
+      density: "중간",
+      prototype: {
+        screenId: screen.id,
+        template: "chip",
+        title: intent.title,
+        body: intent.body,
+        primaryAction: "칩 눌러보기",
+        secondaryAction: "닫기",
+        completion: "선택한 칩의 상세 근거를 열었습니다."
+      }
+    },
+    {
+      ...base,
+      id: "flow",
+      label: "FLOW",
+      principle: "사용자가 왜 이 정보를 봐야 하는지 순서와 맥락을 만듭니다.",
+      density: "높음",
+      prototype: {
+        screenId: screen.id,
+        template: "flow",
+        title: intent.title,
+        body: intent.body,
+        primaryAction: "다음 단계",
+        secondaryAction: "닫기",
+        completion: "다음 흐름으로 이동했습니다."
+      }
+    },
+    {
+      ...base,
+      id: "four-line",
+      label: "4안",
+      principle: "과감하게 줄이고, 핵심 정보와 CTA만 남긴 극단적 안입니다.",
+      density: "매우 낮음",
+      prototype: {
+        screenId: screen.id,
+        template: "minimal",
+        title: intent.title,
+        body: intent.body,
+        primaryAction: intent.primaryAction,
+        secondaryAction: "닫기",
+        completion: "최소 정보 초안이 실행되었습니다."
+      }
+    }
+  ];
+}
+
+function renderVariations(variations) {
+  els.variationGrid.innerHTML = variations
+    .map((variation) => {
+      const encoded = encodeURIComponent(JSON.stringify(variation));
+      return `
+        <article class="variation-card" data-variation-id="${variation.id}" data-variation="${encoded}">
+          <div class="variation-phone">
+            <img src="${variation.screenImage}" alt="" />
+            ${variationPreviewMarkup(variation)}
+          </div>
+          <div class="variation-copy">
+            <h3>${escapeHtml(variation.label)}</h3>
+            <p>${escapeHtml(variation.principle)}</p>
+            <span>정보 밀도: ${escapeHtml(variation.density)}</span>
+            <div class="action-row">
+              <button data-variation-action="try">테스트</button>
+              <button class="primary-button" data-variation-action="save">저장</button>
+            </div>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+  els.variationDrawer.classList.add("is-open");
+  els.variationDrawer.setAttribute("aria-hidden", "false");
+}
+
+function saveVariationVersion(variation) {
+  state.versions.unshift({
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+    screenId: variation.screenId,
+    screenName: `${variation.screenName} · ${variation.label}`,
+    command: variation.command,
+    template: variation.prototype.template,
+    prototype: variation.prototype
+  });
+  state.versions = state.versions.slice(0, 20);
+  saveJson("pretotyping.versions", state.versions);
+}
+
 function inferIntent(command) {
   const normalized = command.trim() || "새 프로토타입을 만들어줘.";
   const hasBenefit = /혜택|benefit|리워드|보상/.test(normalized);
@@ -218,6 +369,52 @@ function renderPrototype(prototype) {
 }
 
 function templateMarkup(prototype) {
+  if (prototype.template === "chip") {
+    return `
+      <div class="dim"></div>
+      <section class="chip-layer">
+        <button class="modal-close" data-close title="닫기">×</button>
+        <h3>${escapeHtml(prototype.title)}</h3>
+        <div class="chip-cloud">
+          <button data-primary>매출 증가</button>
+          <button data-primary>기관 순매수</button>
+          <button data-primary>목표가 상향</button>
+          <button data-primary>커뮤니티 TOP 30</button>
+          <button data-primary>리포트 발행</button>
+        </div>
+      </section>
+    `;
+  }
+
+  if (prototype.template === "flow") {
+    return `
+      <div class="dim"></div>
+      <section class="flow-layer">
+        <button class="modal-close" data-close title="닫기">×</button>
+        <h3>${escapeHtml(prototype.title)}</h3>
+        <ol>
+          <li>가격 변화 감지</li>
+          <li>뉴스와 수급 근거 확인</li>
+          <li>차트와 주문 CTA 연결</li>
+        </ol>
+        <button class="primary-button" data-primary>${escapeHtml(prototype.primaryAction)}</button>
+      </section>
+    `;
+  }
+
+  if (prototype.template === "minimal") {
+    return `
+      <section class="minimal-layer">
+        <h3>${escapeHtml(prototype.title)}</h3>
+        <p>${escapeHtml(prototype.body)}</p>
+        <div class="action-row">
+          <button class="danger" data-primary>매수</button>
+          <button class="blue" data-close>매도</button>
+        </div>
+      </section>
+    `;
+  }
+
   if (prototype.template === "bottomSheet") {
     return `
       <div class="dim"></div>
@@ -256,6 +453,46 @@ function templateMarkup(prototype) {
         <button class="primary-button" data-primary>${escapeHtml(prototype.primaryAction)}</button>
       </div>
     </section>
+  `;
+}
+
+function variationPreviewMarkup(variation) {
+  if (variation.id === "sentence") {
+    return `
+      <div class="mini-overlay sentence">
+        <span>호재</span>
+        <p>매출과 수급 근거를 한 줄로 요약</p>
+      </div>
+    `;
+  }
+
+  if (variation.id === "chip") {
+    return `
+      <div class="mini-overlay chip">
+        <span>NH평단가 34,800</span>
+        <span>외인 순매수</span>
+        <span>목표가 상향</span>
+      </div>
+    `;
+  }
+
+  if (variation.id === "flow") {
+    return `
+      <div class="mini-overlay flow">
+        <span>초반 급락세</span>
+        <span>인 순매수</span>
+        <span>R&D 투자</span>
+        <span>기관 순매도</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="mini-overlay minimal">
+      <div></div>
+      <strong>매수</strong>
+      <strong>매도</strong>
+    </div>
   `;
 }
 

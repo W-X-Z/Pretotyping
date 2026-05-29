@@ -85,6 +85,7 @@
                 <button data-template="route">화면전환</button>
               </div>
               <button class="primary-button full" id="generatePrototype">프로토타입 생성</button>
+              <button class="full" id="generateVariations">4개 초안 비교</button>
             </section>
 
             <section class="panel">
@@ -98,6 +99,17 @@
         </div>
       </section>
     </main>
+
+    <section class="variation-drawer" id="variationDrawer" aria-hidden="true">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">Idea variants</p>
+          <h2>화면 초안 비교</h2>
+        </div>
+        <button id="closeVariations" title="닫기">×</button>
+      </div>
+      <div class="variation-grid" id="variationGrid"></div>
+    </section>
 
     <script type="module" src="/src/app.js"></script>
   </body>

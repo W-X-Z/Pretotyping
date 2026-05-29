@@ -37,3 +37,16 @@ The intended production loop is:
 5. The system publishes a versioned preview URL, such as `/p/:prototypeId`.
 
 This local MVP implements the same shape in the browser with deterministic mock generation. It is ready to swap the mock generator for a real LLM-backed code generation API.
+
+## Idea Variation Mode
+
+A second important workflow is divergent ideation. Instead of producing one prototype from one command, the tool can generate several distinct UI treatments for the same idea.
+
+The current MVP includes four deterministic variation lenses:
+
+- `문장`: lowest-risk copy-first treatment.
+- `CHIP`: scannable reason chips.
+- `FLOW`: higher-density narrative or decision sequence.
+- `4안`: an intentionally reduced version that keeps only the essential content and CTA.
+
+In production, this should become a promptable strategy set. The user gives an idea, a target screen, and optionally a comparison axis such as information density, interruption level, trust, conversion, speed, or learnability. The system returns multiple clickable variants, saves each as a separate prototype version, and lets the user test or combine them.
