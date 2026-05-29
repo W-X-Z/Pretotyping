@@ -1,0 +1,107 @@
+{
+  "project": {
+    "name": "Pretotyping MVP",
+    "description": "A local-first workspace for turning screen captures, IA notes, and natural-language requests into clickable prototype versions."
+  },
+  "screens": [
+    {
+      "id": "discover-long-market",
+      "name": "Discover - Market Overview",
+      "image": "/resources/screens/Screenshot_20260529_142935.jpg",
+      "kind": "scroll-screen",
+      "viewport": { "width": 1080, "height": 4926 },
+      "summary": "Long mobile discovery screen with market cards, stock rankings, ETF rankings, and topic sections.",
+      "areas": ["top navigation", "notice banner", "market index carousel", "ranking cards", "topic lists"],
+      "states": ["default", "scrolled"],
+      "notes": "Use as the best source for long-scroll screen handling."
+    },
+    {
+      "id": "discover-theme-a",
+      "name": "Discover - Theme Detail A",
+      "image": "/resources/screens/Screenshot_20260529_142948.jpg",
+      "kind": "scroll-screen",
+      "viewport": { "width": 1080, "height": 3575 },
+      "summary": "A secondary discovery screen variant with theme or ranking content.",
+      "areas": ["header", "content feed", "ranked list"],
+      "states": ["default", "scrolled"]
+    },
+    {
+      "id": "discover-theme-b",
+      "name": "Discover - Theme Detail B",
+      "image": "/resources/screens/Screenshot_20260529_142955.jpg",
+      "kind": "scroll-screen",
+      "viewport": { "width": 1080, "height": 3575 },
+      "summary": "A second secondary discovery screen variant for comparing tabs, copy, and ranking modules.",
+      "areas": ["header", "content feed", "ranked list"],
+      "states": ["default", "scrolled"]
+    },
+    {
+      "id": "screen-143600",
+      "name": "Captured Screen 143600",
+      "image": "/resources/screens/Screenshot_20260529_143600.jpg",
+      "kind": "screen",
+      "viewport": { "width": 1080, "height": 2340 },
+      "summary": "Captured mobile screen. Needs human labels for exact role, tabs, and primary actions.",
+      "areas": ["status bar", "main content", "bottom area"],
+      "states": ["default"]
+    },
+    {
+      "id": "screen-143605",
+      "name": "Captured Screen 143605",
+      "image": "/resources/screens/Screenshot_20260529_143605.jpg",
+      "kind": "screen",
+      "viewport": { "width": 1080, "height": 2340 },
+      "summary": "Captured mobile screen. Needs human labels for exact role, tabs, and primary actions.",
+      "areas": ["status bar", "main content", "bottom area"],
+      "states": ["default"]
+    },
+    {
+      "id": "screen-143607",
+      "name": "Captured Screen 143607",
+      "image": "/resources/screens/Screenshot_20260529_143607.jpg",
+      "kind": "screen",
+      "viewport": { "width": 1080, "height": 2340 },
+      "summary": "Captured mobile screen. Needs human labels for exact role, tabs, and primary actions.",
+      "areas": ["status bar", "main content", "bottom area"],
+      "states": ["default"]
+    },
+    {
+      "id": "screen-143610",
+      "name": "Captured Screen 143610",
+      "image": "/resources/screens/Screenshot_20260529_143610.jpg",
+      "kind": "screen",
+      "viewport": { "width": 1080, "height": 2340 },
+      "summary": "Captured mobile screen. Needs human labels for exact role, tabs, and primary actions.",
+      "areas": ["status bar", "main content", "bottom area"],
+      "states": ["default"]
+    },
+    {
+      "id": "screen-143617",
+      "name": "Captured Screen 143617",
+      "image": "/resources/screens/Screenshot_20260529_143617.jpg",
+      "kind": "screen",
+      "viewport": { "width": 1080, "height": 2340 },
+      "summary": "Captured mobile screen. Needs human labels for exact role, tabs, and primary actions.",
+      "areas": ["status bar", "main content", "bottom area"],
+      "states": ["default"]
+    },
+    {
+      "id": "screen-143619",
+      "name": "Captured Screen 143619",
+      "image": "/resources/screens/Screenshot_20260529_143619.jpg",
+      "kind": "screen",
+      "viewport": { "width": 1080, "height": 2340 },
+      "summary": "Captured mobile screen. Needs human labels for exact role, tabs, and primary actions.",
+      "areas": ["status bar", "main content", "bottom area"],
+      "states": ["default"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "discover-flow",
+      "name": "Discovery exploration",
+      "screenIds": ["discover-long-market", "discover-theme-a", "discover-theme-b"],
+      "description": "A provisional flow for browsing discovery tabs, ranking sections, and long-scroll content."
+    }
+  ]
+}

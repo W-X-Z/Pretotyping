@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pretotyping MVP</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">P</span>
+          <div>
+            <h1>Pretotyping</h1>
+            <p>Screen IA to clickable prototype</p>
+          </div>
+        </div>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>화면 라이브러리</h2>
+            <span id="screenCount"></span>
+          </div>
+          <div class="screen-list" id="screenList"></div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">MVP workspace</p>
+            <h2 id="activeScreenName">화면 선택 중</h2>
+          </div>
+          <div class="toolbar">
+            <button class="icon-button" id="toggleInspect" title="구조화 패널 보기">⌗</button>
+            <button class="primary-button" id="saveVersion">버전 저장</button>
+          </div>
+        </header>
+
+        <div class="main-grid">
+          <section class="phone-stage">
+            <div class="phone-frame">
+              <div class="phone-scroll" id="phoneScroll">
+                <img id="activeImage" alt="Selected app screen" />
+                <div id="prototypeOverlay" class="prototype-overlay"></div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="command-panel">
+            <section class="panel inspector-panel" id="inspectorPanel">
+              <div class="panel-title">
+                <h2>화면 구조</h2>
+                <span id="screenKind"></span>
+              </div>
+              <label>
+                화면 이름
+                <input id="screenNameInput" />
+              </label>
+              <label>
+                화면 역할 / IA 설명
+                <textarea id="screenSummaryInput" rows="4"></textarea>
+              </label>
+              <label>
+                주요 영역
+                <input id="screenAreasInput" />
+              </label>
+              <label>
+                상태
+                <input id="screenStatesInput" />
+              </label>
+              <button id="applyMetadata">구조 저장</button>
+            </section>
+
+            <section class="panel">
+              <div class="panel-title">
+                <h2>명령</h2>
+                <span>mock generator</span>
+              </div>
+              <textarea id="commandInput" rows="6">이 화면에 혜택 안내 팝업을 띄우고, 확인을 누르면 완료 토스트가 나오게 해줘.</textarea>
+              <div class="segmented">
+                <button class="is-active" data-template="popup">팝업</button>
+                <button data-template="bottomSheet">바텀시트</button>
+                <button data-template="route">화면전환</button>
+              </div>
+              <button class="primary-button full" id="generatePrototype">프로토타입 생성</button>
+            </section>
+
+            <section class="panel">
+              <div class="panel-title">
+                <h2>버전</h2>
+                <span id="versionCount">0</span>
+              </div>
+              <div class="version-list" id="versionList"></div>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/app.js"></script>
+  </body>
+</html>
